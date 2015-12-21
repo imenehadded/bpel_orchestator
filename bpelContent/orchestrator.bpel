@@ -1,0 +1,90 @@
+
+<bpel:process name="orchestrator" targetNamespace="http://orchestrator.org/"
+	suppressJoinFailure="yes" xmlns:tns="http://orchestrator.org/"
+	xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+	xmlns:ws0="http://ws.external.org/">
+
+	<!-- Import the client WSDL -->
+	<bpel:import location="orchestratorArtifacts.wsdl"
+		namespace="http://orchestrator.org/" importType="http://schemas.xmlsoap.org/wsdl/" />
+	<bpel:import location="external_ws.wsdl" namespace="http://ws.external.org/"
+		importType="http://schemas.xmlsoap.org/wsdl/" />
+
+	<bpel:partnerLinks>
+		<bpel:partnerLink name="client" partnerLinkType="tns:orchestrator"
+			myRole="orchestratorProvider" />
+		<bpel:partnerLink name="extrenaLWsPartnerLink"
+			partnerLinkType="tns:ExtenalWsPartnerLinkType" partnerRole="externalws" />
+	</bpel:partnerLinks>
+
+
+	<bpel:variables>
+		<bpel:variable name="clientRequest" messageType="tns:action1Request"></bpel:variable>
+		<bpel:variable name="ServiceAResponse" messageType="ws0:service_aResponse"></bpel:variable>
+		<bpel:variable name="ServiceARequest" messageType="ws0:service_a"></bpel:variable>
+	</bpel:variables>
+
+	<bpel:correlationSets>
+		<bpel:correlationSet name="Session" properties="tns:sessionid" />
+	</bpel:correlationSets>
+
+	<bpel:sequence name="main">
+
+		<bpel:receive name="ReceiveAction1" partnerLink="client"
+			operation="action1" portType="tns:orchestrator" variable="clientRequest"
+			createInstance="yes">
+			<bpel:correlations>
+				<bpel:correlation set="Session" initiate="yes"></bpel:correlation>
+			</bpel:correlations>
+		</bpel:receive>
+
+		<bpel:assign validate="no" name="AssignRequestServiceA">
+
+			<bpel:copy>
+				<bpel:from>
+					<bpel:literal>
+						<ws0:service_a>
+							<arg0>arg0</arg0>
+						</ws0:service_a>
+					</bpel:literal>
+				</bpel:from>
+				<bpel:to variable="ServiceARequest" part="parameters"></bpel:to>
+			</bpel:copy>
+
+			<bpel:copy>
+				<bpel:from>
+					<bpel:literal xml:space="preserve">my val ;)</bpel:literal>
+				</bpel:from>
+				<bpel:to>$ServiceARequest.parameters/arg0</bpel:to>
+
+			</bpel:copy>
+
+		</bpel:assign>
+
+		<bpel:invoke name="InvokeServiceA" partnerLink="extrenaLWsPartnerLink"
+			operation="service_a" portType="ws0:ExternalWs" inputVariable="ServiceARequest"
+			outputVariable="ServiceAResponse"></bpel:invoke>
+		<bpel:reply name="ReplyAction1" partnerLink="client"
+			operation="action1" portType="tns:orchestrator" variable="clientRequest">
+			<bpel:correlations>
+				<bpel:correlation set="Session" initiate="no"></bpel:correlation>
+			</bpel:correlations>
+		</bpel:reply>
+
+		<bpel:receive name="ReceiveAction2" partnerLink="client"
+			operation="action2" portType="tns:orchestrator" variable="clientRequest">
+			<bpel:correlations>
+				<bpel:correlation set="Session" initiate="no"></bpel:correlation>
+			</bpel:correlations>
+		</bpel:receive>
+
+		<bpel:reply name="ReplyAction2" partnerLink="client"
+			operation="action2" portType="tns:orchestrator" variable="clientRequest">
+			<bpel:correlations>
+				<bpel:correlation set="Session" initiate="no"></bpel:correlation>
+			</bpel:correlations>
+		</bpel:reply>
+
+	</bpel:sequence>
+</bpel:process>
+

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03" xmlns:orchestrator.org="http://orchestrator.org/" xmlns:ws.external.org="http://ws.external.org/">
+  <process name="orchestrator.org:orchestrator">
+    <active>true</active>
+    <retired>false</retired>
+    <process-events generate="all"/>
+    <provide partnerLink="client">
+      <service name="orchestrator.org:orchestratorService" port="orchestratorPort"/>
+    </provide>
+    <invoke partnerLink="extrenaLWsPartnerLink">
+      <service name="ws.external.org:ExternalWsService" port="ExternalWsPort"/>
+    </invoke>
+  </process>
+</deploy>
