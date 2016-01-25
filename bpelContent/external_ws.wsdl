@@ -1,121 +1,127 @@
-<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions name="ExternalWsService" targetNamespace="http://ws.external.org/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ws.external.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <wsdl:types>
-<xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.external.org/" version="1.0" xmlns:tns="http://ws.external.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-<xs:element name="service_a" type="tns:service_a" />
-<xs:element name="service_aResponse" type="tns:service_aResponse" />
-<xs:element name="service_b" type="tns:service_b" />
-<xs:element name="service_bResponse" type="tns:service_bResponse" />
-<xs:element name="service_c" type="tns:service_c" />
-<xs:element name="service_cResponse" type="tns:service_cResponse" />
-<xs:complexType name="service_a">
-<xs:sequence>
-<xs:element minOccurs="0" name="arg0" type="xs:string" />
-</xs:sequence>
-</xs:complexType>
-<xs:complexType name="service_aResponse">
-<xs:sequence>
-<xs:element minOccurs="0" name="return" type="xs:string" />
-</xs:sequence>
-</xs:complexType>
-<xs:complexType name="service_c">
-<xs:sequence>
-<xs:element minOccurs="0" name="arg0" type="xs:string" />
-</xs:sequence>
-</xs:complexType>
-<xs:complexType name="service_cResponse">
-<xs:sequence>
-<xs:element minOccurs="0" name="return" type="xs:string" />
-</xs:sequence>
-</xs:complexType>
-<xs:complexType name="service_b">
-<xs:sequence>
-<xs:element minOccurs="0" name="arg0" type="xs:string" />
-</xs:sequence>
-</xs:complexType>
-<xs:complexType name="service_bResponse">
-<xs:sequence>
-<xs:element minOccurs="0" name="return" type="xs:string" />
-</xs:sequence>
-</xs:complexType>
-</xs:schema>
-  </wsdl:types>
-  <wsdl:message name="service_a">
-    <wsdl:part element="tns:service_a" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="service_bResponse">
-    <wsdl:part element="tns:service_bResponse" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="service_aResponse">
-    <wsdl:part element="tns:service_aResponse" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="service_c">
-    <wsdl:part element="tns:service_c" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="service_b">
-    <wsdl:part element="tns:service_b" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="service_cResponse">
-    <wsdl:part element="tns:service_cResponse" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:portType name="ExternalWs">
-    <wsdl:operation name="service_a">
-      <wsdl:input message="tns:service_a" name="service_a">
-    </wsdl:input>
-      <wsdl:output message="tns:service_aResponse" name="service_aResponse">
-    </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="service_c">
-      <wsdl:input message="tns:service_c" name="service_c">
-    </wsdl:input>
-      <wsdl:output message="tns:service_cResponse" name="service_cResponse">
-    </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="service_b">
-      <wsdl:input message="tns:service_b" name="service_b">
-    </wsdl:input>
-      <wsdl:output message="tns:service_bResponse" name="service_bResponse">
-    </wsdl:output>
-    </wsdl:operation>
-  </wsdl:portType>
-  <wsdl:binding name="ExternalWsServiceSoapBinding" type="tns:ExternalWs">
-    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="service_a">
-      <soap:operation soapAction="" style="document" />
-      <wsdl:input name="service_a">
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output name="service_aResponse">
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="service_c">
-      <soap:operation soapAction="" style="document" />
-      <wsdl:input name="service_c">
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output name="service_cResponse">
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="service_b">
-      <soap:operation soapAction="" style="document" />
-      <wsdl:input name="service_b">
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output name="service_bResponse">
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-  </wsdl:binding>
-  <wsdl:service name="ExternalWsService">
-    <wsdl:port binding="tns:ExternalWsServiceSoapBinding" name="ExternalWsPort">
-      <soap:address location="http://localhost:8080/ws_external/external_ws" />
-    </wsdl:port>
-  </wsdl:service>
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions name="ExternalWsService"
+	targetNamespace="http://ws.external.org/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ws.external.org/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<wsdl:types>
+		<xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.external.org/"
+			version="1.0" xmlns:tns="http://ws.external.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:element name="service_a" type="tns:service_a" />
+			<xs:element name="service_aResponse" type="tns:service_aResponse" />
+			<xs:element name="service_b" type="tns:service_b" />
+			<xs:element name="service_bResponse" type="tns:service_bResponse" />
+			<xs:element name="service_c" type="tns:service_c" />
+			<xs:element name="service_cResponse" type="tns:service_cResponse" />
+			<xs:complexType name="service_a">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="arg0" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="service_aResponse">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="return" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="service_c">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="arg0" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="service_cResponse">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="return" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="service_b">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="arg0" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="service_bResponse">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="return" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="service_a">
+		<wsdl:part element="tns:service_a" name="parameters">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="service_bResponse">
+		<wsdl:part element="tns:service_bResponse" name="parameters">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="service_aResponse">
+		<wsdl:part element="tns:service_aResponse" name="parameters">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="service_c">
+		<wsdl:part element="tns:service_c" name="parameters">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="service_b">
+		<wsdl:part element="tns:service_b" name="parameters">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="service_cResponse">
+		<wsdl:part element="tns:service_cResponse" name="parameters">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="ExternalWs">
+		<wsdl:operation name="service_a">
+			<wsdl:input message="tns:service_a" name="service_a">
+			</wsdl:input>
+			<wsdl:output message="tns:service_aResponse" name="service_aResponse">
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="service_c">
+			<wsdl:input message="tns:service_c" name="service_c">
+			</wsdl:input>
+			<wsdl:output message="tns:service_cResponse" name="service_cResponse">
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="service_b">
+			<wsdl:input message="tns:service_b" name="service_b">
+			</wsdl:input>
+			<wsdl:output message="tns:service_bResponse" name="service_bResponse">
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="ExternalWsServiceSoapBinding" type="tns:ExternalWs">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="service_a">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input name="service_a">
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output name="service_aResponse">
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="service_c">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input name="service_c">
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output name="service_cResponse">
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="service_b">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input name="service_b">
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output name="service_bResponse">
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="ExternalWsService">
+		<wsdl:port binding="tns:ExternalWsServiceSoapBinding" name="ExternalWsPort">
+			<soap:address location="http://localhost:8080/ws_external/external_ws" />
+		</wsdl:port>
+	</wsdl:service>
 </wsdl:definitions>

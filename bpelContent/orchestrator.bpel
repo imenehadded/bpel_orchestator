@@ -175,8 +175,7 @@
               <bpel:from >concat($pReplyOutput,", Scheduling deadline : ")</bpel:from>
               <bpel:to variable="pReplyOutput"/>
             </bpel:copy> 
-            
-            
+ 
 			<bpel:copy>
               <bpel:from >concat($pReplyOutput,$pSchedulingDeadline)</bpel:from>
               <bpel:to variable="pReplyOutput"/>
