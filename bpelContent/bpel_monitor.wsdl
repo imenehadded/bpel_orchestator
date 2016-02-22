@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://views.monitor.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="monitorService" targetNamespace="http://views.monitor.org/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" targetNamespace="http://views.monitor.org/" version="1.0">
+<xs:element name="service_monitor" type="tns:service_monitor"/>
+<xs:element name="service_monitorResponse" type="tns:service_monitorResponse"/>
+<xs:complexType name="service_monitor">
+<xs:sequence>
+<xs:element minOccurs="0" name="arg0" type="xs:string"/>
+<xs:element minOccurs="0" name="arg1" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="service_monitorResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="service_monitor">
+    <wsdl:part element="tns:service_monitor" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="service_monitorResponse">
+    <wsdl:part element="tns:service_monitorResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="monitor">
+    <wsdl:operation name="service_monitor">
+      <wsdl:input message="tns:service_monitor" name="service_monitor">
+    </wsdl:input>
+      <wsdl:output message="tns:service_monitorResponse" name="service_monitorResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="monitorServiceSoapBinding" type="tns:monitor">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="service_monitor">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="service_monitor">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="service_monitorResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="monitorService">
+    <wsdl:port binding="tns:monitorServiceSoapBinding" name="monitorPort">
+      <soap:address location="http://localhost:8080/ws_soap/monitor"/>
+    </wsdl:port>
+  </wsdl:service>
+<plnk:partnerLinkType name="MonitorPartnerLinkType">
+    <plnk:role name="bpel_monitor" portType="tns:monitor"/>
+  </plnk:partnerLinkType>
+</wsdl:definitions>

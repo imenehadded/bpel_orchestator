@@ -1,199 +1,214 @@
-
-<bpel:process name="orchestrator" targetNamespace="http://orchestrator.org/"
-	suppressJoinFailure="yes" xmlns:tns="http://orchestrator.org/"
-	xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
-	xmlns:ws0="http://ws.external.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<bpel:process xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable" 
+xmlns:tns="http://orchestrator.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="orchestrator" 
+suppressJoinFailure="yes" targetNamespace="http://orchestrator.org/" xmlns:ns="http://ws.external.org/">
 
 	<!-- Import the client WSDL -->
-	<bpel:import location="orchestratorArtifacts.wsdl"
-		namespace="http://orchestrator.org/" importType="http://schemas.xmlsoap.org/wsdl/" />
-	<bpel:import location="external_ws.wsdl" namespace="http://ws.external.org/"
-		importType="http://schemas.xmlsoap.org/wsdl/" />
+    <bpel:import namespace="http://ws.external.org/" location="external_ws.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"></bpel:import>
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/" location="orchestratorArtifacts.wsdl" namespace="http://orchestrator.org/"/>
 
 	<bpel:partnerLinks>
-		<bpel:partnerLink name="client" partnerLinkType="tns:orchestrator"
-			myRole="orchestratorProvider" />
-		<bpel:partnerLink name="extrenaLWsPartnerLink"
-			partnerLinkType="tns:ExtenalWsPartnerLinkType" partnerRole="externalws" />
-	</bpel:partnerLinks>
+		<bpel:partnerLink myRole="orchestratorProvider" name="client" partnerLinkType="tns:orchestrator"/>
+		
+        
+        <bpel:partnerLink name="ExternalWs" partnerLinkType="tns:ExternalWsPartnerLink" partnerRole="externalWsRole"></bpel:partnerLink>
+    </bpel:partnerLinks>
 
 	<bpel:variables>
-		<bpel:variable name="clientRequest" messageType="tns:action1Request"></bpel:variable>
-		<bpel:variable name="invoicingResponse" messageType="ws0:service_aResponse"></bpel:variable>
-		<bpel:variable name="invoicingRequest" messageType="ws0:service_a"></bpel:variable>
-        <bpel:variable name="shippingResponse" messageType="ws0:service_bResponse"></bpel:variable>
-        <bpel:variable name="shippingRequest" messageType="ws0:service_b"></bpel:variable>
-        <bpel:variable name="schedulingResponse" messageType="ws0:service_cResponse"></bpel:variable>
-        <bpel:variable name="schedulingRequest" messageType="ws0:service_c"></bpel:variable>
-        <bpel:variable name="pInvoicingPrice" type="xsd:string"/>
-        <bpel:variable name="pShippingPrice" type="xsd:string"/>
-        <bpel:variable name="pSchedulingDeadline" type="xsd:string"/>
-        <bpel:variable name="pReplyOutput" type="xsd:string">
+		<bpel:variable messageType="tns:action1Request" name="clientRequest"/>
+
+        <bpel:variable name="ExternalWsResponse" messageType="ns:bcResponse"></bpel:variable>
+        <bpel:variable name="ExternalWsRequest" messageType="ns:bc"></bpel:variable>
+        <bpel:variable name="ExternalWsResponse1" messageType="ns:bfResponse"></bpel:variable>
+        <bpel:variable name="ExternalWsRequest1" messageType="ns:bf"></bpel:variable>
+        <bpel:variable name="ExternalWsResponse2" messageType="ns:cfResponse"></bpel:variable>
+        <bpel:variable name="ExternalWsRequest2" messageType="ns:cf"></bpel:variable>
+        <bpel:variable name="ExternalWsResponse3" messageType="ns:expFResponse"></bpel:variable>
+        <bpel:variable name="ExternalWsRequest3" messageType="ns:expF"></bpel:variable>
+        <bpel:variable name="ExternalWsResponse4" messageType="ns:cheapFResponse"></bpel:variable>
+        <bpel:variable name="ExternalWsRequest4" messageType="ns:cheapF"></bpel:variable>
+        <bpel:variable name="conditionif" type="xsd:string">
             <bpel:from>
-                <bpel:literal xml:space="preserve"><![CDATA[]]></bpel:literal>
+                <bpel:literal xml:space="preserve">0</bpel:literal>
             </bpel:from>
         </bpel:variable>
-    </bpel:variables>
-
-	<bpel:correlationSets>
-		<bpel:correlationSet name="Session" properties="tns:sessionid" />
+        <bpel:variable name="ExternalWsResponse5" messageType="ns:blResponse"></bpel:variable>
+        <bpel:variable name="ExternalWsRequest5" messageType="ns:bl"></bpel:variable>
+        <bpel:variable name="default" type="xsd:string">
+            <bpel:from>
+                <bpel:literal xml:space="preserve">None</bpel:literal>
+            </bpel:from>
+        </bpel:variable>
+    </bpel:variables>    <bpel:correlationSets>
+		<bpel:correlationSet name="Session" properties="tns:sessionid"/>
 	</bpel:correlationSets>
 
-	<bpel:sequence name="main">
+    <bpel:sequence name="main">
 
-		<bpel:receive name="receiveInput" partnerLink="client"
-			operation="action1" portType="tns:orchestrator" variable="clientRequest"
-			createInstance="yes">
-			<bpel:correlations>
-				<bpel:correlation set="Session" initiate="yes"></bpel:correlation>
-			</bpel:correlations>
-		</bpel:receive>
-
-        <bpel:flow name="Flow"><bpel:sequence name='InvoicingSequence'>
-                
-                <bpel:assign validate="no" name="InitializeInvoicing">
-                	<bpel:copy>
-						<bpel:from>
-							<bpel:literal><ws0:service_a><arg0>arg0</arg0></ws0:service_a></bpel:literal>
-						</bpel:from>
-						<bpel:to variable="invoicingRequest" part="parameters"></bpel:to>
-					</bpel:copy>
-		
-					<bpel:copy>
-						<bpel:from>
-							<bpel:literal xml:space="preserve">invoice</bpel:literal>
-						</bpel:from>
-						<bpel:to>$invoicingRequest.parameters/arg0</bpel:to>
-					</bpel:copy>
-                </bpel:assign>
-                <bpel:invoke name="InvokeInvoicing" partnerLink="extrenaLWsPartnerLink" operation="service_a" portType="ws0:ExternalWs" inputVariable="invoicingRequest" outputVariable="invoicingResponse"></bpel:invoke>
-                
-                
-                
-                <bpel:assign validate="no" name="getInvoicingPrice">
-                    <bpel:copy>
-                        <bpel:from part="parameters" variable="invoicingResponse">
-                            <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">
-                                <![CDATA[return]]>
-                            </bpel:query>
-                        </bpel:from>
-                        <bpel:to variable="pInvoicingPrice"></bpel:to>
-                    </bpel:copy>
-                </bpel:assign>
-            </bpel:sequence>
-            
-            <bpel:sequence name="ShippingSequence">
-                <bpel:assign validate="no" name="InitializeShipping">
-                
-                <bpel:copy>
-						<bpel:from>
-							<bpel:literal><ws0:service_b><arg0>arg0</arg0></ws0:service_b></bpel:literal>
-						</bpel:from>
-						<bpel:to variable="shippingRequest" part="parameters"></bpel:to>
-					</bpel:copy>
-		
-					<bpel:copy>
-						<bpel:from>
-							<bpel:literal xml:space="preserve">shipping</bpel:literal>
-						</bpel:from>
-						<bpel:to>$shippingRequest.parameters/arg0</bpel:to>
-					</bpel:copy>
-					
-                </bpel:assign>
-                <bpel:invoke name="InvokeShipping" partnerLink="extrenaLWsPartnerLink" operation="service_b" portType="ws0:ExternalWs" inputVariable="shippingRequest" outputVariable="shippingResponse"></bpel:invoke>
-                
-                <bpel:assign validate="no" name="getShippingPrice">
-                    <bpel:copy>
-                        <bpel:from part="parameters" variable="shippingResponse">
-                            <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">
-                                <![CDATA[return]]>
-                            </bpel:query>
-                        </bpel:from>
-                        <bpel:to variable="pShippingPrice"></bpel:to>
-                    </bpel:copy>
-                </bpel:assign>
-            </bpel:sequence>
-            
-        </bpel:flow>
-        <bpel:sequence name="ProductionSchedulingSequence">
         
-            <bpel:assign validate="no" name="InitializeProductionScheduling">
-
-			<bpel:copy>
-				<bpel:from>
-					<bpel:literal><ws0:service_c><arg0>arg0</arg0></ws0:service_c></bpel:literal>
-				</bpel:from>
-				<bpel:to variable="schedulingRequest" part="parameters"></bpel:to>
-			</bpel:copy>
-
-			<bpel:copy>
-				<bpel:from>
-					<bpel:literal xml:space="preserve">scheduling</bpel:literal>
-				</bpel:from>
-				<bpel:to>$schedulingRequest.parameters/arg0</bpel:to>
-			</bpel:copy>
-
-		</bpel:assign>
-		
-            <bpel:invoke name="InvokeProductionScheduling" partnerLink="extrenaLWsPartnerLink" operation="service_c" portType="ws0:ExternalWs" inputVariable="schedulingRequest" outputVariable="schedulingResponse"></bpel:invoke>
-            <bpel:assign validate="no" name="getSchedulingDeadline">
-                <bpel:copy>
-                    <bpel:from part="parameters" variable="schedulingResponse">
-                        <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">
-                            <![CDATA[return]]>
-                        </bpel:query>
-                    </bpel:from>
-                    <bpel:to variable="pSchedulingDeadline"></bpel:to>
-                </bpel:copy>
-            </bpel:assign>
-        </bpel:sequence>
- 
-        <bpel:assign validate="no" name="gatheringResponceData">
+        <bpel:pick name="PickModel" createInstance="yes"><bpel:onMessage partnerLink="client" operation="action1" portType="tns:orchestrator" variable="clientRequest">
+                <bpel:sequence name="onlyCar">
+                    
+                    <bpel:assign validate="no" name="AssignBCInput">
+                        
+                    
+            
+            
+            
+            
+            
+            
         
-           <bpel:copy>
-              <bpel:from >concat($pReplyOutput,"Invoicing price : ")</bpel:from>
-              <bpel:to variable="pReplyOutput"/>
-            </bpel:copy> 
-            
-        	<bpel:copy>
-              <bpel:from >concat($pReplyOutput,$pInvoicingPrice)</bpel:from>
-              <bpel:to variable="pReplyOutput"/>
-            </bpel:copy> 
-     
-            <bpel:copy>
-              <bpel:from >concat($pReplyOutput,", Shipping price : ")</bpel:from>
-              <bpel:to variable="pReplyOutput"/>
-            </bpel:copy> 
-                   
-            
-			<bpel:copy>
-              <bpel:from >concat($pReplyOutput,$pShippingPrice)</bpel:from>
-              <bpel:to variable="pReplyOutput"/>
-            </bpel:copy> 
+                        
+                        
+                        <bpel:copy>
+                            <bpel:from><bpel:literal><tns:bc xmlns:tns="http://ws.external.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <arg0>arg0</arg0>
+</tns:bc>
+</bpel:literal></bpel:from>
+                            <bpel:to variable="ExternalWsRequest" part="parameters"></bpel:to>
+                        </bpel:copy>
+                        <bpel:copy>
+                            <bpel:from variable="default"></bpel:from>
+                            <bpel:to part="parameters" variable="ExternalWsRequest">
+                                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[arg0]]></bpel:query>
+                            </bpel:to>
+                        </bpel:copy>
+                    </bpel:assign>
+                    <bpel:invoke name="bc" partnerLink="ExternalWs" operation="bc" portType="ns:ExternalWs" inputVariable="ExternalWsRequest" outputVariable="ExternalWsResponse"></bpel:invoke>
+                    <bpel:reply name="Rd" partnerLink="client" operation="action1" portType="tns:orchestrator" variable="clientRequest"></bpel:reply>
+                </bpel:sequence>
+            </bpel:onMessage>
+            <bpel:onMessage partnerLink="client" operation="action2" portType="tns:orchestrator" variable="clientRequest">
+                <bpel:sequence name="CarAndFlight">
+                    
+                    <bpel:sequence name="getFlight">
+                        
+                        <bpel:assign validate="no" name="AssigeInput">
+                            
 
-            <bpel:copy>
-              <bpel:from >concat($pReplyOutput,", Scheduling deadline : ")</bpel:from>
-              <bpel:to variable="pReplyOutput"/>
-            </bpel:copy> 
- 
-			<bpel:copy>
-              <bpel:from >concat($pReplyOutput,$pSchedulingDeadline)</bpel:from>
-              <bpel:to variable="pReplyOutput"/>
-            </bpel:copy> 
-            
-            <bpel:copy>
-                <bpel:from variable="pReplyOutput"></bpel:from>
-                <bpel:to part="parameters" variable="clientRequest"></bpel:to>
-            </bpel:copy>
- 
-        </bpel:assign>
-        <bpel:reply name="replyOutput" partnerLink="client"
-			operation="action1" portType="tns:orchestrator" variable="clientRequest">
-			<bpel:correlations>
-				<bpel:correlation set="Session" initiate="no"></bpel:correlation>
-			</bpel:correlations>
-		</bpel:reply>
- 
-	</bpel:sequence>
+                        
+                            
+                            
+                            
+                            
+                            <bpel:copy>
+                                <bpel:from><bpel:literal><tns:cheapF xmlns:tns="http://ws.external.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <arg0>arg0</arg0>
+</tns:cheapF>
+</bpel:literal></bpel:from>
+                                <bpel:to variable="ExternalWsRequest4" part="parameters"></bpel:to>
+                            </bpel:copy>
+                            <bpel:copy>
+                                <bpel:from><bpel:literal><tns:expF xmlns:tns="http://ws.external.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <arg0>arg0</arg0>
+</tns:expF>
+</bpel:literal></bpel:from>
+                                <bpel:to variable="ExternalWsRequest3" part="parameters"></bpel:to>
+                            </bpel:copy>
+                            <bpel:copy>
+                                <bpel:from><bpel:literal><tns:cf xmlns:tns="http://ws.external.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <arg0>arg0</arg0>
+</tns:cf>
+</bpel:literal></bpel:from>
+                                <bpel:to variable="ExternalWsRequest2" part="parameters"></bpel:to>
+                            </bpel:copy>
+                            <bpel:copy>
+                                <bpel:from><bpel:literal><tns:bf xmlns:tns="http://ws.external.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <arg0>arg0</arg0>
+</tns:bf>
+</bpel:literal></bpel:from>
+                                <bpel:to variable="ExternalWsRequest1" part="parameters"></bpel:to>
+                            </bpel:copy>
+                            <bpel:copy>
+                                <bpel:from variable="default"></bpel:from>
+                                <bpel:to part="parameters" variable="ExternalWsRequest1">
+                                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[arg0]]></bpel:query>
+                                </bpel:to>
+                            </bpel:copy>
+                            <bpel:copy>
+                                <bpel:from variable="default"></bpel:from>
+                                <bpel:to part="parameters" variable="ExternalWsRequest2">
+                                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[arg0]]></bpel:query>
+                                </bpel:to>
+                            </bpel:copy>
+                            <bpel:copy>
+                                <bpel:from variable="default"></bpel:from>
+                                <bpel:to part="parameters" variable="ExternalWsRequest3">
+                                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[arg0]]></bpel:query>
+                                </bpel:to>
+                            </bpel:copy>
+                            <bpel:copy>
+                                <bpel:from variable="default"></bpel:from>
+                                <bpel:to part="parameters" variable="ExternalWsRequest4">
+                                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[arg0]]></bpel:query>
+                                </bpel:to>
+                            </bpel:copy>
+                        </bpel:assign>
+                        <bpel:invoke name="bf" partnerLink="ExternalWs" operation="bf" portType="ns:ExternalWs" inputVariable="ExternalWsRequest1" outputVariable="ExternalWsResponse1"></bpel:invoke>
+                        <bpel:invoke name="cf" partnerLink="ExternalWs" operation="cf" portType="ns:ExternalWs" inputVariable="ExternalWsRequest2" outputVariable="ExternalWsResponse2"></bpel:invoke>
+                        <bpel:if name="If_expensive">
+                        
+                        <bpel:condition expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[$conditionif = 0]]></bpel:condition>
+                        
+                        <bpel:invoke name="expF" partnerLink="ExternalWs" operation="expF" portType="ns:ExternalWs" inputVariable="ExternalWsRequest3" outputVariable="ExternalWsResponse3"></bpel:invoke>
+                        <bpel:elseif>
+		                	<bpel:condition expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[$conditionif =1]]></bpel:condition>
+		                	<bpel:invoke name="cheapF" partnerLink="ExternalWs" operation="cheapF" portType="ns:ExternalWs" inputVariable="ExternalWsRequest4" outputVariable="ExternalWsResponse4"></bpel:invoke>
+                        </bpel:elseif>
+                        
+                        
+                        </bpel:if>
+                        
+                    </bpel:sequence>
+                    
+                    <bpel:flow name="getCar"><bpel:sequence name="Sequence">
+                            
+                            <bpel:assign validate="no" name="AssignBCInput">
+                                <bpel:copy>
+                                    <bpel:from><bpel:literal><tns:bc xmlns:tns="http://ws.external.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <arg0>arg0</arg0>
+</tns:bc>
+</bpel:literal></bpel:from>
+                                    <bpel:to variable="ExternalWsRequest" part="parameters"></bpel:to>
+                                </bpel:copy>
+                                <bpel:copy>
+                                    <bpel:from variable="default">
+                                    </bpel:from>
+                                    <bpel:to part="parameters" variable="ExternalWsRequest">
+                                        <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[arg0]]></bpel:query>
+                                    </bpel:to>
+                                </bpel:copy>
+                            </bpel:assign>
+                            <bpel:invoke name="bc" partnerLink="ExternalWs" operation="bc" portType="ns:ExternalWs" inputVariable="ExternalWsRequest" outputVariable="ExternalWsResponse"></bpel:invoke>
+                        </bpel:sequence><bpel:sequence name="Sequence1">
+                            <bpel:assign validate="no" name="AssignBLInput">
+                                <bpel:copy>
+                                    <bpel:from><bpel:literal><tns:bl xmlns:tns="http://ws.external.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <arg0>arg0</arg0>
+</tns:bl>
+</bpel:literal></bpel:from>
+                                    <bpel:to variable="ExternalWsRequest5" part="parameters"></bpel:to>
+                                </bpel:copy>
+                                <bpel:copy>
+                                    <bpel:from variable="default">
+                                    </bpel:from>
+                                    <bpel:to part="parameters" variable="ExternalWsRequest5">
+                                        <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[arg0]]></bpel:query>
+                                    </bpel:to>
+                                </bpel:copy>
+                            </bpel:assign>
+                            <bpel:invoke name="bl" partnerLink="ExternalWs" operation="bl" portType="ns:ExternalWs" inputVariable="ExternalWsRequest5" outputVariable="ExternalWsResponse5"></bpel:invoke>
+                        </bpel:sequence></bpel:flow>
+                    
+                    
+                    
+                    
+                    <bpel:reply name="Rd" partnerLink="client" operation="action2" portType="tns:orchestrator" variable="clientRequest"></bpel:reply>
+                </bpel:sequence>
+            </bpel:onMessage>
+        
+        </bpel:pick>
+        
+    </bpel:sequence>
 </bpel:process>
-

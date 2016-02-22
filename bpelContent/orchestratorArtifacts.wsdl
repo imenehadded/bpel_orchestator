@@ -1,64 +1,58 @@
-<?xml version="1.0"?>
-<wsdl:definitions name="orchestrator" targetNamespace="http://orchestrator.org/"
-	xmlns:tns="http://orchestrator.org/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
-	xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:p="http://www.w3.org/2001/XMLSchema"
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:types="http://mytypes.org/xsd"
-	xmlns:ws0="http://ws.external.org/">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:p="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://orchestrator.org/" xmlns:types="http://mytypes.org/xsd" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop" xmlns:ws0="http://ws.external.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="orchestrator" targetNamespace="http://orchestrator.org/">
 
-	<wsdl:types>
+    <plnk:partnerLinkType name="ExternalWsPartnerLink">
+    <plnk:role name="externalWsRole" portType="ws0:ExternalWs"/>
+  </plnk:partnerLinkType>
+    <wsdl:import location="external_ws.wsdl" namespace="http://ws.external.org/"/>
+    <wsdl:types>
 		<xsd:schema targetNamespace="http://mytypes.org/xsd">
-			<xsd:element name="SessionIdentity" type="xsd:string" />
+			<xsd:element name="SessionIdentity" type="xsd:string"/>
 		</xsd:schema>
 	</wsdl:types>
 
 	<wsdl:message name="action1Request">
-		<wsdl:part name="parameters" type="xsd:string" />
-		<wsdl:part name="ID" element="types:SessionIdentity" />
+		<wsdl:part name="parameters" type="p:string"/>
+		<wsdl:part element="types:SessionIdentity" name="ID"/>
 	</wsdl:message>
 
 	<wsdl:portType name="orchestrator">
 		<wsdl:operation name="action1">
-			<wsdl:input message="tns:action1Request" name="inputAction1" />
-			<wsdl:output message="tns:action1Request" name="outputAction1" />
+			<wsdl:input message="tns:action1Request" name="inputAction1"/>
+			<wsdl:output message="tns:action1Request" name="outputAction1"/>
 		</wsdl:operation>
 		<wsdl:operation name="action2">
-			<wsdl:input message="tns:action1Request" name="inputAction2" />
-			<wsdl:output message="tns:action1Request" name="outputAction2" />
+			<wsdl:input message="tns:action1Request" name="inputAction2"/>
+			<wsdl:output message="tns:action1Request" name="outputAction2"/>
 		</wsdl:operation>
 	</wsdl:portType>
 
 	<wsdl:binding name="orchestratorBinding" type="tns:orchestrator">
-		<soap:binding style="rpc"
-			transport="http://schemas.xmlsoap.org/soap/http" />
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
 
 		<wsdl:operation name="action1">
-			<soap:operation soapAction="" style="rpc" />
+			<soap:operation soapAction="" style="rpc"/>
 			<wsdl:input>
-				<soap:body namespace="http://orchestrator.org/" use="literal"
-					parts="parameters" />
-				<soap:header message="tns:action1Request" part="ID" use="literal" />
+				<soap:body namespace="http://orchestrator.org/" parts="parameters" use="literal"/>
+				<soap:header message="tns:action1Request" part="ID" use="literal"/>
 			</wsdl:input>
 
 			<wsdl:output>
-				<soap:body namespace="http://orchestrator.org/" use="literal"
-					parts="parameters" />
-				<soap:header message="tns:action1Request" part="ID" use="literal" />
+				<soap:body namespace="http://orchestrator.org/" parts="parameters" use="literal"/>
+				<soap:header message="tns:action1Request" part="ID" use="literal"/>
 			</wsdl:output>
 		</wsdl:operation>
 
 		<wsdl:operation name="action2">
-			<soap:operation soapAction="" style="rpc" />
+			<soap:operation soapAction="" style="rpc"/>
 			<wsdl:input>
-				<soap:body namespace="http://orchestrator.org/" use="literal"
-					parts="parameters" />
-				<soap:header message="tns:action1Request" part="ID" use="literal" />
+				<soap:body namespace="http://orchestrator.org/" parts="parameters" use="literal"/>
+				<soap:header message="tns:action1Request" part="ID" use="literal"/>
 			</wsdl:input>
 
 			<wsdl:output>
-				<soap:body namespace="http://orchestrator.org/" use="literal"
-					parts="parameters" />
-				<soap:header message="tns:action1Request" part="ID" use="literal" />
+				<soap:body namespace="http://orchestrator.org/" parts="parameters" use="literal"/>
+				<soap:header message="tns:action1Request" part="ID" use="literal"/>
 			</wsdl:output>
 		</wsdl:operation>
 
@@ -66,28 +60,23 @@
 	</wsdl:binding>
 
 	<wsdl:service name="orchestratorService">
-		<wsdl:port name="orchestratorPort" binding="tns:orchestratorBinding">
-			<soap:address location="http://localhost:8080/orchestrator" />
+		<wsdl:port binding="tns:orchestratorBinding" name="orchestratorPort">
+			<soap:address location="http://localhost:8080/orchestrator"/>
 		</wsdl:port>
 	</wsdl:service>
 
-	<vprop:property name="sessionid" type="xsd:string" />
+	<vprop:property name="sessionid" type="p:string"/>
 
-	<vprop:propertyAlias messageType="tns:action1Request"
-		part="ID" propertyName="tns:sessionid">
+	<vprop:propertyAlias messageType="tns:action1Request" part="ID" propertyName="tns:sessionid">
 		<vprop:query>text()</vprop:query>
 	</vprop:propertyAlias>
 
 	<plnk:partnerLinkType name="orchestrator">
-		<plnk:role name="orchestratorProvider" portType="tns:orchestrator" />
+		<plnk:role name="orchestratorProvider" portType="tns:orchestrator"/>
 	</plnk:partnerLinkType>
 
 	<!-- ****** EXTENAL WS PARTNER LINK ****** -->
-	<wsdl:import location="external_ws.wsdl" namespace="http://ws.external.org/" />
 
-	<plnk:partnerLinkType name="ExtenalWsPartnerLinkType">
-		<plnk:role name="externalws" portType="ws0:ExternalWs" />
-	</plnk:partnerLinkType>
 	<!-- ************************************* -->
 
 </wsdl:definitions>
