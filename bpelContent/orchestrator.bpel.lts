@@ -1,0 +1,139 @@
+////////////////////////////////////////////////////////////////////
+// START BPEL4WS Process: ORCHESTRATOR
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// BPEL Process Information
+//
+// Added Partner : client,TNS:ORCHESTRATOR
+// Added Partner : externalws,TNS:EXTERNALWSPARTNERLINK
+// Added Partner : monitorpartnerlinktype,MONITNS:MONITORPARTNERLINKTYPE
+// ORCHESTRATOR has 1 partner(s) linkss.
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// BPEL Process Translation
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// START: General Process Condition Variables
+////////////////////////////////////////////////////////////////////
+range ORCHESTRATOR_IntRange = 0..1
+ORCHESTRATOR_variable(A=0) = ORCHESTRATOR_variable[A],
+ORCHESTRATOR_variable[i:ORCHESTRATOR_IntRange] = ( write[j:ORCHESTRATOR_IntRange]->ORCHESTRATOR_variable[j] | read[i]->ORCHESTRATOR_variable[i]),
+ORCHESTRATOR_variable['null] = ( write[j:ORCHESTRATOR_IntRange]->ORCHESTRATOR_variable[j] | read['null]->ORCHESTRATOR_variable['null]).
+set ORCHESTRATOR_BoolRange = {false, true}
+ENUM_ORCHESTRATOR_variable(A='null) = ORCHESTRATOR_variable[A],
+ORCHESTRATOR_variable[i:ORCHESTRATOR_BoolRange] = ( write[j:ORCHESTRATOR_BoolRange]->ORCHESTRATOR_variable[j] | read[i]->ORCHESTRATOR_variable[i]),
+ORCHESTRATOR_variable['null] = ( write[j:ORCHESTRATOR_BoolRange]->ORCHESTRATOR_variable[j] | read['null]->ORCHESTRATOR_variable['null]).
+////////////////////////////////////////////////////////////////////
+// END: Variables
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// START: sequence - MAIN1
+////////////////////////////////////////////////////////////////////
+// START: PICK Events Manager
+////////////////////////////////////////////////////////////////////
+// START: sequence - ONLYCAR1
+////////////////////////////////////////////////////////////////////
+ORCHESTRATOR_BC1 = (orchestrator_externalws_invoke_bc -> END).
+ORCHESTRATOR_BC1_REPLY = (orchestrator_externalws_receive_bc ->END).
+ORCHESTRATOR_BC1_SEQ = ORCHESTRATOR_BC1; ORCHESTRATOR_BC1_REPLY; END.
+ORCHESTRATOR_RD1 = (orchestrator_client_reply_action1 -> END).
+ORCHESTRATOR_ONLYCAR1 = ORCHESTRATOR_BC1_SEQ ; ORCHESTRATOR_RD1; END.
+////////////////////////////////////////////////////////////////////
+// END: sequence - ORCHESTRATOR_ONLYCAR1
+////////////////////////////////////////////////////////////////////
+ORCHESTRATOR_ONMESSAGE_ACTION1_SEQ =  ORCHESTRATOR_ONLYCAR1; END.
+////////////////////////////////////////////////////////////////////
+// START: sequence - CARANDFLIGHT1
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// START: sequence - GETFLIGHT1
+////////////////////////////////////////////////////////////////////
+ORCHESTRATOR_BF1 = (orchestrator_externalws_invoke_bf -> END).
+ORCHESTRATOR_BF1_REPLY = (orchestrator_externalws_receive_bf ->END).
+ORCHESTRATOR_BF1_SEQ = ORCHESTRATOR_BF1; ORCHESTRATOR_BF1_REPLY; END.
+ORCHESTRATOR_CF1 = (orchestrator_externalws_invoke_cf -> END).
+ORCHESTRATOR_CF1_REPLY = (orchestrator_externalws_receive_cf ->END).
+ORCHESTRATOR_CF1_SEQ = ORCHESTRATOR_CF1; ORCHESTRATOR_CF1_REPLY; END.
+ORCHESTRATOR_EXPF1 = (orchestrator_externalws_invoke_expf -> END).
+ORCHESTRATOR_EXPF1_REPLY = (orchestrator_externalws_receive_expf ->END).
+ORCHESTRATOR_EXPF1_SEQ = ORCHESTRATOR_EXPF1; ORCHESTRATOR_EXPF1_REPLY; END.
+////////////////////////////////////////////////////////////////////
+// START: condition - orchestrator_if_expensiveelseif1seq
+////////////////////////////////////////////////////////////////////
+||ORCHESTRATOR_IF_EXPENSIVEELSEIF1SEQCONDITIONOUTCOME = orchestrator_if_expensiveelseif1seq.condition:ORCHESTRATOR_variable.
+set ORCHESTRATOR_IF_EXPENSIVEELSEIF1SEQCONDITIONOUTCOME_ALPHABET = {orchestrator_if_expensiveelseif1seq.condition.{read,write}.[ORCHESTRATOR_BoolRange]}
+ORCHESTRATOR_IF_EXPENSIVEELSEIF1SEQCONDITIONEVAL = (orchestrator_if_expensiveelseif1seq.condition.read[i:ORCHESTRATOR_BoolRange]->ORCHESTRATOR_IF_EXPENSIVEELSEIF1SEQCONDITIONEVAL[i]),
+ORCHESTRATOR_IF_EXPENSIVEELSEIF1SEQCONDITIONEVAL[i:ORCHESTRATOR_BoolRange] = if (i=='true)
+then ORCHESTRATOR_IF_EXPENSIVEELSEIF1SEQ; END else END.
+////////////////////////////////////////////////////////////////////
+// END: condition - orchestrator_if_expensiveelseif1seq
+////////////////////////////////////////////////////////////////////
+||ORCHESTRATOR_IF_EXPENSIVEELSEIF1SEQEVAL = (ORCHESTRATOR_IF_EXPENSIVEELSEIF1SEQCONDITIONEVAL).
+ORCHESTRATOR_CHEAPF1 = (orchestrator_externalws_invoke_cheapf -> END).
+ORCHESTRATOR_CHEAPF1_REPLY = (orchestrator_externalws_receive_cheapf ->END).
+ORCHESTRATOR_CHEAPF1_SEQ = ORCHESTRATOR_CHEAPF1; ORCHESTRATOR_CHEAPF1_REPLY; END.
+||ORCHESTRATOR_IF_EXPENSIVEELSEIF1SEQ = (ORCHESTRATOR_CHEAPF1_SEQ).
+////////////////////////////////////////////////////////////////////
+// START: condition - orchestrator_if_expensive
+////////////////////////////////////////////////////////////////////
+||ORCHESTRATOR_IF_EXPENSIVECONDITIONOUTCOME = orchestrator_if_expensive.condition:ORCHESTRATOR_variable.
+set ORCHESTRATOR_IF_EXPENSIVECONDITIONOUTCOME_ALPHABET = {orchestrator_if_expensive.condition.{read,write}.[ORCHESTRATOR_BoolRange]}
+ORCHESTRATOR_IF_EXPENSIVECONDITIONEVAL = (orchestrator_if_expensive.condition.read[i:ORCHESTRATOR_BoolRange]->ORCHESTRATOR_IF_EXPENSIVECONDITIONEVAL[i]),
+ORCHESTRATOR_IF_EXPENSIVECONDITIONEVAL[i:ORCHESTRATOR_BoolRange] = if (i=='true)
+then ORCHESTRATOR_EXPF1_SEQ; END else  ORCHESTRATOR_IF_EXPENSIVEELSEIF1SEQEVAL;END.
+////////////////////////////////////////////////////////////////////
+// END: condition - orchestrator_if_expensive
+////////////////////////////////////////////////////////////////////
+ORCHESTRATOR_IF_EXPENSIVE = ORCHESTRATOR_IF_EXPENSIVECONDITIONEVAL; END.
+ORCHESTRATOR_GETFLIGHT1 = ORCHESTRATOR_BF1_SEQ ; ORCHESTRATOR_CF1_SEQ ; ORCHESTRATOR_IF_EXPENSIVE; END.
+////////////////////////////////////////////////////////////////////
+// END: sequence - ORCHESTRATOR_GETFLIGHT1
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// START: flow - GETCAR
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// START: sequence - SEQUENCE1
+////////////////////////////////////////////////////////////////////
+ORCHESTRATOR_BC2 = (orchestrator_externalws_invoke_bc -> END).
+ORCHESTRATOR_BC2_REPLY = (orchestrator_externalws_receive_bc ->END).
+ORCHESTRATOR_BC2_SEQ = ORCHESTRATOR_BC2; ORCHESTRATOR_BC2_REPLY; END.
+ORCHESTRATOR_SEQUENCE1 = ORCHESTRATOR_BC2_SEQ; END.
+////////////////////////////////////////////////////////////////////
+// END: sequence - ORCHESTRATOR_SEQUENCE1
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// START: sequence - SEQUENCE11
+////////////////////////////////////////////////////////////////////
+ORCHESTRATOR_BL1 = (orchestrator_externalws_invoke_bl -> END).
+ORCHESTRATOR_BL1_REPLY = (orchestrator_externalws_receive_bl ->END).
+ORCHESTRATOR_BL1_SEQ = ORCHESTRATOR_BL1; ORCHESTRATOR_BL1_REPLY; END.
+ORCHESTRATOR_SEQUENCE11 = ORCHESTRATOR_BL1_SEQ; END.
+////////////////////////////////////////////////////////////////////
+// END: sequence - ORCHESTRATOR_SEQUENCE11
+////////////////////////////////////////////////////////////////////
+||GETCAR = (ORCHESTRATOR_SEQUENCE1 || ORCHESTRATOR_SEQUENCE11).
+////////////////////////////////////////////////////////////////////
+// END: flow - GETCAR
+////////////////////////////////////////////////////////////////////
+ORCHESTRATOR_RD2 = (orchestrator_client_reply_action2 -> END).
+ORCHESTRATOR_CARANDFLIGHT1 = ORCHESTRATOR_GETFLIGHT1 ; GETCAR ; ORCHESTRATOR_RD2; END.
+////////////////////////////////////////////////////////////////////
+// END: sequence - ORCHESTRATOR_CARANDFLIGHT1
+////////////////////////////////////////////////////////////////////
+ORCHESTRATOR_ONMESSAGE_ACTION2_SEQ =  ORCHESTRATOR_CARANDFLIGHT1; END.
+ORCHESTRATOR_PICKMODEL_EVENTS = (orchestrator_client_receive_action1->ORCHESTRATOR_ACTION1_EVENTSEQ | orchestrator_client_receive_action2->ORCHESTRATOR_ACTION2_EVENTSEQ),
+ORCHESTRATOR_ACTION1_EVENTSEQ = ORCHESTRATOR_ONMESSAGE_ACTION1_SEQ; END,
+ORCHESTRATOR_ACTION2_EVENTSEQ = ORCHESTRATOR_ONMESSAGE_ACTION2_SEQ; END.
+||ORCHESTRATOR_PICKMODEL_EVENTSMGR = (ORCHESTRATOR_PICKMODEL_EVENTS).
+// END: PICK Events Manager
+ORCHESTRATOR_MAIN1 = ORCHESTRATOR_PICKMODEL_EVENTSMGR; END.
+////////////////////////////////////////////////////////////////////
+// END: sequence - ORCHESTRATOR_MAIN1
+////////////////////////////////////////////////////////////////////
+set ORCHESTRATOR_ACTIONSET = {orchestrator_client_receive_action1,orchestrator_externalws_invoke_bc,orchestrator_externalws_receive_bc,orchestrator_client_reply_action1,orchestrator_client_receive_action2,orchestrator_externalws_invoke_bf,orchestrator_externalws_receive_bf,orchestrator_externalws_invoke_cf,orchestrator_externalws_receive_cf,orchestrator_externalws_invoke_expf,orchestrator_externalws_receive_expf,orchestrator_if_expensiveelseif1seq.condition.read.true,orchestrator_if_expensiveelseif1seq.condition.read.false,orchestrator_if_expensiveelseif1seq.condition.write.true,orchestrator_if_expensiveelseif1seq.condition.write.false,orchestrator_externalws_invoke_cheapf,orchestrator_externalws_receive_cheapf,orchestrator_if_expensive.condition.read.true,orchestrator_if_expensive.condition.read.false,orchestrator_if_expensive.condition.write.true,orchestrator_if_expensive.condition.write.false,orchestrator_externalws_invoke_bc,orchestrator_externalws_receive_bc,orchestrator_externalws_invoke_bl,orchestrator_externalws_receive_bl,orchestrator_client_reply_action2}
+||ORCHESTRATOR_Instance = (ORCHESTRATOR_IF_EXPENSIVEELSEIF1SEQCONDITIONOUTCOME || ORCHESTRATOR_IF_EXPENSIVECONDITIONOUTCOME || GETCAR || ORCHESTRATOR_MAIN1).
+||ORCHESTRATOR_BPELModel = (ORCHESTRATOR_MAIN1).
+// /////////////////////////////////////////////////////////////////
+// END BPEL4WS Process: ORCHESTRATOR
+// /////////////////////////////////////////////////////////////////

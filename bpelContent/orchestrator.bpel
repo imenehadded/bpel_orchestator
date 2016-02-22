@@ -151,10 +151,16 @@ suppressJoinFailure="yes" targetNamespace="http://orchestrator.org/" xmlns:ns="h
                         
                         <bpel:condition expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[$conditionif = 0]]></bpel:condition>
                         
-                        <bpel:invoke name="expF" partnerLink="ExternalWs" operation="expF" portType="ns:ExternalWs" inputVariable="ExternalWsRequest3" outputVariable="ExternalWsResponse3"></bpel:invoke>
+                        <bpel:sequence name="expensive">
+                                
+                                <bpel:invoke name="expF" partnerLink="ExternalWs" operation="expF" portType="ns:ExternalWs" inputVariable="ExternalWsRequest3" outputVariable="ExternalWsResponse3"></bpel:invoke>
+                            </bpel:sequence>
                         <bpel:elseif>
 		                	<bpel:condition expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[$conditionif =1]]></bpel:condition>
-		                	<bpel:invoke name="cheapF" partnerLink="ExternalWs" operation="cheapF" portType="ns:ExternalWs" inputVariable="ExternalWsRequest4" outputVariable="ExternalWsResponse4"></bpel:invoke>
+		                	<bpel:sequence name="cheap">
+                                    
+                                    <bpel:invoke name="cheapF" partnerLink="ExternalWs" operation="cheapF" portType="ns:ExternalWs" inputVariable="ExternalWsRequest4" outputVariable="ExternalWsResponse4"></bpel:invoke>
+                                </bpel:sequence>
                         </bpel:elseif>
                         
                         
@@ -162,7 +168,7 @@ suppressJoinFailure="yes" targetNamespace="http://orchestrator.org/" xmlns:ns="h
                         
                     </bpel:sequence>
                     
-                    <bpel:flow name="getCar"><bpel:sequence name="Sequence">
+                    <bpel:flow name="getCar"><bpel:sequence name="book_car">
                             
                             <bpel:assign validate="no" name="AssignBCInput">
                                 <bpel:copy>
@@ -181,7 +187,7 @@ suppressJoinFailure="yes" targetNamespace="http://orchestrator.org/" xmlns:ns="h
                                 </bpel:copy>
                             </bpel:assign>
                             <bpel:invoke name="bc" partnerLink="ExternalWs" operation="bc" portType="ns:ExternalWs" inputVariable="ExternalWsRequest" outputVariable="ExternalWsResponse"></bpel:invoke>
-                        </bpel:sequence><bpel:sequence name="Sequence1">
+                        </bpel:sequence><bpel:sequence name="book_limo">
                             <bpel:assign validate="no" name="AssignBLInput">
                                 <bpel:copy>
                                     <bpel:from><bpel:literal><tns:bl xmlns:tns="http://ws.external.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
